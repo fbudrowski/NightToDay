@@ -15,11 +15,13 @@ import glob
 import matplotlib as plt
 from datetime import datetime
 
-model_save_path = 'models/repos/NightToDay/saved_models/1581095043.509077'
-epoch = 44
+model_save_path = 'models/repos/NightToDay/saved_models/1581085141.202446'
+epoch = 12
 
 g_model_AtoB = tf.keras.models.load_model(path.join(model_save_path, 'g_model_AtoB_{}'.format(epoch) + '.h5'))
+g_model_AtoB.compile(loss='mse', optimizer=Adam(lr=0.0002, beta_1=0.5), loss_weights=[0.5])
 
 
-photo_path = '/disk-old/Sony/short/00001_00_0.1s.ARW'
+
+photo_path = '/home/franco/datasets/vrnn/Sony/short/00207_00_0.1s.ARW'
 evaluate_photo(photo_path, 'generated_photo/' + str(time.time()) , g_model_AtoB)

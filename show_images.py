@@ -15,7 +15,7 @@ import glob
 import matplotlib as plt
 from datetime import datetime
 
-model_save_path = '/home/franco/datasets/visualn/Fuji/saved_models/1581150994.4581282'
+model_save_path = '/home/franco/datasets/visualn/Fuji/models/1581150994.4581282'
 
 epoch = 28
 
@@ -23,4 +23,4 @@ g_model_AtoB = tf.keras.models.load_model(path.join(model_save_path, 'g_model_At
 
 
 photo_path = '/home/franco/datasets/visualn/Sony/short/00056_00_0.1s.ARW'
-evaluate_photo(photo_path, 'generated_photo/' + str(time.time()) , g_model_AtoB)
+evaluate_photo(photo_path, 'generated_photo/' + str(time.time()) , g_model_AtoB, dataset=sony_dataset)

@@ -152,10 +152,12 @@ class Generator:
         if dataset_no is None:
             dataset_no = np.random.randint(0, len(self.datasets))
         dataset = self.datasets[dataset_no]
+        fullpaths = self.fullpaths_per_dataset[dataset_no]
+        gt_paths = self.gt_paths_per_dataset[dataset_no]
         samples = []
         if not self.exposed:
             for _ in range(n_samples):
-                sample_fp = np.random.choice(self.fullpaths)
+                sample_fp = np.random.choice(fullpaths)
                 id = os.path.basename(sample_fp)[0:5]
                 gt_files = glob.glob(dataset['gt_dir'] + '{}_00*.{}'.format(id, dataset['extension']))
                 gt_fp = gt_files[0]
@@ -167,7 +169,7 @@ class Generator:
                 samples.append(sample_photo)
         else:
             for _ in range(n_samples):
-                sample_fp = np.random.choice(self.gt_paths)
+                sample_fp = np.random.choice(gt_paths)
                 sample_photo = read_gt(sample_fp, True)
                 sample_photo = augment_photo(sample_photo)
                 samples.append(sample_photo)
@@ -192,4 +194,7 @@ def evaluate_photo(filepath, output_dir, model, dataset):
     ax2.imshow(gt_photo[0, :, :, :])
     ax3 = fig.add_subplot(2, 2, 3)
     ax3.imshow(pred[0, :, :, :])
+    print("Going to show image")
     plt.show()
+    print("Image shown")
+

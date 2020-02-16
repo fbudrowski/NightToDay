@@ -8,7 +8,7 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import TensorBoard
 from random import randint, random
 from numpy import ones, zeros, asarray
-from read_input import datasets, train_fps_per_dataset, train_ids_per_dataset, Generator, evaluate_photo
+from read_input import datasets, train_fps_per_dataset, train_ids_per_dataset, test_fps_per_dataset, test_ids_per_dataset, Generator, evaluate_photo
 import time
 from os import makedirs, path
 import glob
@@ -237,7 +237,7 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 
 
 # input shape
-image_shape = (128, 128, 3)
+image_shape = (512, 512, 3)
 # generator: A -> B
 g_model_AtoB = define_generator(image_shape)
 # generator: B -> A
@@ -281,18 +281,18 @@ c_model_BtoA = define_composite_model(g_model_BtoA, d_model_A, g_model_AtoB, ima
 
 
 # dataset generators
-input_generator = Generator(test_fps, train_fps, gt_dir, False)
-gt_generator = Generator(train_fps, train_fps, gt_dir, True)
+input_generator = Generator(test_fps_per_dataset, train_fps_per_dataset, datasets, False)
+gt_generator = Generator(test_fps_per_dataset, train_fps_per_dataset, datasets, True)
 
 n_epochs, n_batch = 300, 1
-timestamp = str(time.time())
-models_path = path.join('models/repos/NightToDay/saved_models', timestamp)
+timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+models_path = path.join('/home/franco/models', timestamp)
 print("Models are being saved to {} before each epoch.".format(models_path))
 makedirs(models_path)
 
 # train models
 train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA,
-      len(train_ids), input_generator, gt_generator, start_epoch, n_epochs, n_batch,
+      sum([len(ids) for ids in train_ids_per_dataset]), input_generator, gt_generator, start_epoch, n_epochs, n_batch,
       models_path)
 
 

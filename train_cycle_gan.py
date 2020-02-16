@@ -237,7 +237,7 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 
 
 # input shape
-image_shape = (512, 512, 3)
+image_shape = (128, 128, 3)
 # generator: A -> B
 g_model_AtoB = define_generator(image_shape)
 # generator: B -> A

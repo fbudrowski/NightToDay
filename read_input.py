@@ -13,12 +13,12 @@ sony_dataset = {
         'extension': 'ARW',
         'name': 'Sony',
     }
-fuji_dataset = {
-        'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
-        'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
-        'extension': 'RAF',
-        'name': 'Fuji',
-    }
+# fuji_dataset = {
+#         'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
+#         'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
+#         'extension': 'RAF',
+#         'name': 'Fuji',
+#     }
 
 datasets = [
     {
@@ -27,12 +27,12 @@ datasets = [
         'extension': 'ARW',
         'name': 'Sony',
     },
-    {
-        'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
-        'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
-        'extension': 'RAF',
-        'name': 'Fuji',
-    },
+    # {
+    #     'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
+    #     'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
+    #     'extension': 'RAF',
+    #     'name': 'Fuji',
+    # },
 ]
 
 sony_gt_dir = '/home/franco/datasets/visualn/Sony/long/'
@@ -46,7 +46,7 @@ test_fps_per_dataset = [glob.glob(dataset['input_dir'] + '*.' + dataset['extensi
 test_ids_per_dataset = [[int(os.path.basename(test_fp)[0:5]) for test_fp in test_fps] for test_fps in test_fps_per_dataset]
 
 
-patch_size = 512 # cropped image size
+patch_size = 128 # cropped image size
 
 
 # pack Bayer image to 4 channels

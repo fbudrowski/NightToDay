@@ -266,10 +266,12 @@ def load_models(start_epoch, load_models_path):
 
 
 
-load_models_path = "/home/franco/repos/NightToDay/models/repos/NightToDay/saved_models/1581085141.202446/"
-start_epoch = 13
-load_models(start_epoch, load_models_path)
+#load_models_path = "/home/franco/repos/NightToDay/models/repos/NightToDay/saved_models/1581095043.509077/"
+#start_epoch = 47
+#load_models(start_epoch, load_models_path)
 
+
+start_epoch = 0
 # composite: A -> B -> [real/fake, A]
 c_model_AtoB = define_composite_model(g_model_AtoB, d_model_B, g_model_BtoA, image_shape)
 # composite: B -> A -> [real/fake, B]
@@ -282,7 +284,7 @@ c_model_BtoA = define_composite_model(g_model_BtoA, d_model_A, g_model_AtoB, ima
 input_generator = Generator(test_fps, train_fps, gt_dir, False)
 gt_generator = Generator(train_fps, train_fps, gt_dir, True)
 
-n_epochs, n_batch = 100, 1
+n_epochs, n_batch = 300, 1
 timestamp = str(time.time())
 models_path = path.join('models/repos/NightToDay/saved_models', timestamp)
 print("Models are being saved to {} before each epoch.".format(models_path))
@@ -296,4 +298,4 @@ train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_Bt
 
 # --- photo evaluation
 # evaluation_path = '/sata_disk/VRNN/Learning-to-See-in-the-Dark/evaluated_samples'
-evaluate_photo('/disk-old/Sony/short/00001_00_0.1s.ARW', '', g_model_AtoB)
+evaluate_photo('/home/franco/datasets/vrnn/Sony/short/00001_00_0.1s.ARW', '', g_model_AtoB)

@@ -7,20 +7,46 @@ from os import path
 import matplotlib.pyplot as plt
 
 # Short (input) and long (ground truth) exposure time photos directories
-input_dir = '/home/franco/datasets/visualn/Sony/short/'
-gt_dir = '/home/franco/datasets/visualn/Sony/long/'
+sony_dataset = {
+        'input_dir': '/home/franco/datasets/visualn/Sony/short/',
+        'gt_dir': '/home/franco/datasets/visualn/Sony/long/',
+        'extension': 'ARW',
+        'name': 'Sony',
+    }
+fuji_dataset = {
+        'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
+        'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
+        'extension': 'RAF',
+        'name': 'Fuji',
+    }
 
-train_fps = glob.glob(gt_dir + '*.ARW') # full paths
-train_ids = [int(os.path.basename(train_fp)[0:5]) for train_fp in train_fps]
+datasets = [
+    {
+        'input_dir': '/home/franco/datasets/visualn/Sony/short/',
+        'gt_dir': '/home/franco/datasets/visualn/Sony/long/',
+        'extension': 'ARW',
+        'name': 'Sony',
+    },
+    {
+        'input_dir': '/home/franco/datasets/visualn/Fuji/short/',
+        'gt_dir': '/home/franco/datasets/visualn/Fuji/long/',
+        'extension': 'RAF',
+        'name': 'Fuji',
+    },
+]
 
-test_fps = glob.glob(input_dir + '*.ARW') # full paths
-test_ids = [int(os.path.basename(test_fp)[0:5]) for test_fp in test_fps]
+sony_gt_dir = '/home/franco/datasets/visualn/Sony/long/'
+sony_input_dir = '/home/franco/datasets/visualn/Sony/short/'
 
-# print("train fps", train_fps)
-# print(gt_dir)
-# print("There are", len(test_ids), "test-ids and", len(train_ids), "train_ids\n\n\n\n")
 
-patch_size = 128 # cropped image size
+train_fps_per_dataset = [glob.glob(dataset['gt_dir'] + '*.' + dataset['extension']) for dataset in datasets] # full paths
+train_ids_per_dataset = [[int(os.path.basename(train_fp)[0:5]) for train_fp in train_fps] for train_fps in train_fps_per_dataset]
+
+test_fps_per_dataset = [glob.glob(dataset['input_dir'] + '*.' + dataset['extension']) for dataset in datasets] # full paths
+test_ids_per_dataset = [[int(os.path.basename(test_fp)[0:5]) for test_fp in test_fps] for test_fps in test_fps_per_dataset]
+
+
+patch_size = 512 # cropped image size
 
 
 # pack Bayer image to 4 channels
@@ -116,19 +142,22 @@ def augment_photo(input):
 # If exposed set to True, these are ground truth (exposed) photos
 class Generator:
 
-    def __init__(self, fullpaths, gt_paths, gt_dir, exposed):
-        self.fullpaths = fullpaths
-        self.gt_paths = gt_paths
+    def __init__(self, fullpaths_per_dataset, gt_paths_per_dataset, datasets, exposed):
+        self.fullpaths_per_dataset = fullpaths_per_dataset
+        self.gt_paths_per_dataset = gt_paths_per_dataset
         self.exposed = exposed
-        self.gt_dir = gt_dir
+        self.datasets = datasets
 
-    def get_samples(self, n_samples):
+    def get_samples(self, n_samples, dataset_no=None):
+        if dataset_no is None:
+            dataset_no = np.random.randint(0, len(self.datasets))
+        dataset = self.datasets[dataset_no]
         samples = []
         if not self.exposed:
             for _ in range(n_samples):
                 sample_fp = np.random.choice(self.fullpaths)
                 id = os.path.basename(sample_fp)[0:5]
-                gt_files = glob.glob(gt_dir + '{}_00*.ARW'.format(id))
+                gt_files = glob.glob(dataset['gt_dir'] + '{}_00*.{}'.format(id, dataset['extension']))
                 gt_fp = gt_files[0]
                 sample_exp = float(os.path.basename(sample_fp)[9:-5])
                 gt_exp = float(os.path.basename(gt_fp)[9:-5])
@@ -145,9 +174,9 @@ class Generator:
         return np.concatenate(samples)
 
 
-def evaluate_photo(filepath, output_dir, model):
+def evaluate_photo(filepath, output_dir, model, dataset):
     id = path.basename(filepath)[0:5]
-    gt_files = glob.glob(gt_dir + '{}_00*.ARW'.format(id))
+    gt_files = glob.glob(dataset['gt_dir'] + '{}_00*.{}'.format(id, dataset['extension']))
     gt_fp = gt_files[0]
     sample_exp = float(path.basename(filepath)[9:-5])
     gt_exp = float(path.basename(gt_fp)[9:-5])

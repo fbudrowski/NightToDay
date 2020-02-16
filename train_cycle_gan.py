@@ -8,7 +8,7 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import TensorBoard
 from random import randint, random
 from numpy import ones, zeros, asarray
-from read_input import train_ids, train_fps, test_fps, gt_dir, Generator, evaluate_photo
+from read_input import datasets, train_fps_per_dataset, train_ids_per_dataset, Generator, evaluate_photo
 import time
 from os import makedirs, path
 import glob
@@ -30,7 +30,7 @@ def summarize_and_plot_model(model, plot_file):
 def define_discriminator(image_shape):
     # weight initialization
     init = RandomNormal(stddev=0.02)
-    # source image input
+    # source image inputsony_in
     in_image = Input(shape=image_shape)
     # C64
     d = Conv2D(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=init)(in_image)
